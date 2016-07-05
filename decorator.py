@@ -11,10 +11,10 @@ def log(func):
      注意这里的*args代表没有名字的参数
      **kwargs代表有名字的参数
     '''
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kvargs):
         print "begin calling " + func.__name__
-        func(*args, **kwargs)
-        print '*args', args, '**kwargs', kwargs
+        func(*args, **kvargs)
+        print '*args', args, '**kwargs', kvargs
 
         print "end calling " + func.__name__
     return wrapper
