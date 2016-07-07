@@ -4,13 +4,23 @@
 from flask import Flask
 from flask import request
 from flask import redirect
-from flask import render_template
+from flask import render_template,flash,get_flashed_messages
 
 app = Flask(__name__)
+#用这个设置JINJA模板中line_statement的标识符
+app.jinja_env.line_statement_prefix = "#"
+#设置secret_key可以标识用户的session
+app.secret_key = "leoeatle"
+
 
 @app.route("/")
+@app.route("/index/")
 def index():
-    return "hello Leo. This is from flask."
+    res = ''
+    for msg, category in get_flashed_messages(with_categories = True):
+        res += res + category + msg + '<br>'
+
+    return "hello Leo. This is from flask." + res
 
 
 #'/'自动补齐
@@ -41,9 +51,22 @@ def request_demo():
 def new_path():
     return "new path"
 
+#如果code是301,就是永久跳转,浏览器会临时保存
+#如果code是302,就是暂时跳转
 @app.route("/re/<int:code>")
 def redirect_demo(code):
     return redirect("/newpath", code=code)
+
+#使用errorhandler对异常情况做统一处理
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("not_found.html", url=request.url)
+
+@app.route("/login")
+def login():
+    #每一次进入login就会在缓存区域存下新的Welcome
+    flash('Welcome','info')
+
 
 
 if __name__ == "__main__":
